@@ -24,21 +24,21 @@ var eateries []*entity.Eatery
 func (ea *InMemoryEateryAdapter) FindEateryByName(name string) (e []*entity.Eatery, err *apperr.AppErr) {
 	var res []*entity.Eatery
 
-    for _, item := range eateries {
-        if strings.Contains(item.Name, name) {
+	for _, item := range eateries {
+		if strings.Contains(item.Name, name) {
 			fmt.Println(true)
-            res = append(res, item)
-        }
-    }
+			res = append(res, item)
+		}
+	}
 
 	errMsg := fmt.Sprintf("Eateries not found for '%v' search.", name)
-    if len(res) == 0 {
-        return nil, apperr.NewNotFoundError(errMsg)
-    }
+	if len(res) == 0 {
+		return nil, apperr.NewNotFoundError(errMsg)
+	}
 
 	fmt.Println("eateries by name: ", res)
 
-    return res, nil
+	return res, nil
 }
 
 func (ea *InMemoryEateryAdapter) CreateEatery(eatery *entity.Eatery) (err *apperr.AppErr) {

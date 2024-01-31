@@ -92,7 +92,7 @@ func (uc *EateryController) GetEatery(ctx echo.Context) error {
 
 	log.Info().
 		Str("journey", "eateryController.GetEatery").
-		Msgf("Eateries found successfully.",)
+		Msgf("Eateries found successfully.")
 
 	return ctx.JSON(http.StatusOK, userResponse)
 }

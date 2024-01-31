@@ -1,8 +1,8 @@
 package entity
 
 import (
-	// "github.com/foliveiracamara/bents-api/configuration/apperr"
-	// "golang.org/x/crypto/bcrypt"
+// "github.com/foliveiracamara/bents-api/configuration/apperr"
+// "golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -17,7 +17,7 @@ type User struct {
 
 // func (ud *User) EncryptPassword() *apperr.AppErr {
 // 	hashedPassword, err := bcrypt.GenerateFromPassword(
-// 		[]byte(ud.Password), 
+// 		[]byte(ud.Password),
 // 		bcrypt.DefaultCost,
 // 	)
 // 	if err != nil {
@@ -34,6 +34,6 @@ type User struct {
 // 		appErr := apperr.NewUnauthorizedError("Invalid password.")
 // 		return appErr
 // 	}
-	
+
 // 	return nil
 // }

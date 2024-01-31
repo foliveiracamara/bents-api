@@ -13,7 +13,7 @@ func (s *Server) InitRoutes(isLambda string) interface{} {
 	s.corsConfig()
 
 	main := s.Echo.Group("/api/v1")
-	{ 
+	{
 		main.GET("", s.HealthCheck)
 
 		u := main.Group("/user")
@@ -26,8 +26,8 @@ func (s *Server) InitRoutes(isLambda string) interface{} {
 		e := main.Group("/eatery")
 		{
 			e.POST("", s.controllerWrapper(eateryController.CreateEatery))
-			e.GET("/list", s.controllerWrapper(eateryController.FindEateries)) 
-			e.GET("/:name", s.controllerWrapper(eateryController.GetEatery)) 
+			e.GET("/list", s.controllerWrapper(eateryController.FindEateries))
+			e.GET("/:name", s.controllerWrapper(eateryController.GetEatery))
 		}
 	}
 

@@ -32,10 +32,10 @@ func (u *EateriesResponse) ParseEateryDomainToResponse(eat []*entity.Eatery) *Ea
 	for _, e := range eat {
 		fmt.Println(e)
 		eateries = append(eateries, &EateryResponse{
-			UUID:  e.UUID,
-			Name:  e.Name,
-			Email: e.Email,
-			Rank:  e.Rank,	
+			UUID:     e.UUID,
+			Name:     e.Name,
+			Email:    e.Email,
+			Rank:     e.Rank,
 			Category: e.Category,
 		})
 	}

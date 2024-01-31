@@ -22,7 +22,7 @@ func (s *Server) corsConfig() {
 		AllowOrigins: allowedFrontEndUrls,
 		AllowHeaders: allowedHeaders,
 	}))
-	
+
 	// s.Echo.Use(middlewares.AuthMiddleware)
 }
 

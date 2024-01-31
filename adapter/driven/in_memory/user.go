@@ -29,7 +29,7 @@ func (ua *InMemoryUserAdapter) GetUser(id string) (u *entity.User, err *apperr.A
 
 func (ua *InMemoryUserAdapter) CreateUser(user *entity.User) (err *apperr.AppErr) {
 	users = append(users, user)
-	
+
 	return nil
 }
 
