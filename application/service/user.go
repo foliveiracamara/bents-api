@@ -13,7 +13,7 @@ import (
 
 type UserService struct {
 	UserPort port.UserPort
-	Encrypt *security.Encryption
+	Encrypt  *security.Encryption
 }
 
 func NewUserService(userPort port.UserPort) *UserService {
@@ -47,7 +47,7 @@ func (us *UserService) CreateUser(user *entity.User) (u *entity.User, err *apper
 		return u, err
 	}
 	user.Password = pwd
-	
+
 	err = us.UserPort.CreateUser(user)
 	if err != nil {
 		appErr := apperr.NewInternalServerError("Error creating user.")
@@ -64,13 +64,7 @@ func (us *UserService) LoginUser(email string, passwordRequest string) (err *app
 		return err
 	}
 
-	hash, err := us.Encrypt.EncryptPassword(passwordDB)
-	if err != nil {
-		fmt.Println("Error encrypting.")
-		return err
-	}
-
-	err = us.Encrypt.CompareHashAndPassword(hash, passwordRequest)
+	err = us.Encrypt.CompareHashAndPassword(passwordDB, passwordRequest)
 	if err != nil {
 		log.Error().
 			Str("journey", "userService.LoginUser").

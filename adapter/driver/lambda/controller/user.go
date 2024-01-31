@@ -108,7 +108,7 @@ func (uc *UserController) LoginUser(ctx echo.Context) error {
 			Str("journey", "userController.LoginUser").
 			Msgf(err.Error())
 
-		// appErr := validation.ValidateUserError(err) 
+		// appErr := validation.ValidateUserError(err)
 		appErr := apperr.NewBadRequestError("Some fields are incorrect.")
 		return ctx.JSON(appErr.Code, appErr)
 	}

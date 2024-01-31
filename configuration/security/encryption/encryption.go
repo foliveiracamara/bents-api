@@ -5,7 +5,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Encryption struct {}
+type Encryption struct{}
 
 func (e *Encryption) EncryptPassword(password string) (string, *apperr.AppErr) {
 	hashedPassword, err := bcrypt.GenerateFromPassword(
@@ -16,9 +16,8 @@ func (e *Encryption) EncryptPassword(password string) (string, *apperr.AppErr) {
 		appErr := apperr.NewInternalServerError("Error encrypting password.")
 		return "", appErr
 	}
-	password = string(hashedPassword)
-	
-	return password, nil
+
+	return string(hashedPassword), nil
 }
 
 func (e *Encryption) CompareHashAndPassword(hashedPassword string, password string) *apperr.AppErr {
@@ -27,6 +26,6 @@ func (e *Encryption) CompareHashAndPassword(hashedPassword string, password stri
 		appErr := apperr.NewUnauthorizedError("Invalid password.")
 		return appErr
 	}
-	
+
 	return nil
 }
