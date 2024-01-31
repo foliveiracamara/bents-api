@@ -1,13 +1,11 @@
 package service
 
 import (
-	"fmt"
-	"regexp"
-
 	"github.com/foliveiracamara/bents-api/application/entity"
 	port "github.com/foliveiracamara/bents-api/application/port/driven"
 	"github.com/foliveiracamara/bents-api/configuration/apperr"
 	security "github.com/foliveiracamara/bents-api/configuration/security/encryption"
+	"github.com/rs/zerolog/log"
 )
 
 type EateryService struct {
@@ -27,7 +25,7 @@ func (es *EateryService) CreateEatery(user *entity.Eatery) (e *entity.Eatery, er
 		return e, err
 	}
 	user.Password = pwd
-	
+
 	err = es.EateryPort.CreateEatery(user)
 	if err != nil {
 		appErr := apperr.NewInternalServerError("Error creating user.")
@@ -37,31 +35,59 @@ func (es *EateryService) CreateEatery(user *entity.Eatery) (e *entity.Eatery, er
 	return user, nil
 }
 
-func (us *EateryService) GetEatery(uuid string) (u *entity.Eatery, err *apperr.AppErr) {
-	if uuid == "" || len(uuid) > 36 || len(uuid) < 36 {
-		return u, apperr.NewBadRequestError("Invalid UUID.")
+func (us *EateryService) GetEatery(name string) (eat []*entity.Eatery, err *apperr.AppErr) {
+	if name == "" {
+		return eat, apperr.NewBadRequestError("Eatery name cant be empty.")
 	}
 
-	uuidRegex := `^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$`
-	match, _ := regexp.MatchString(uuidRegex, uuid)
-	if !match {
-		return u, apperr.NewBadRequestError("Invalid UUID.")
-	}
-
-	u, err = us.EateryPort.FindEatery(uuid)
+	res, err := us.EateryPort.FindEateryByName(name)
 	if err != nil {
-		return u, err
+		return eat, err
 	}
 
-	return u, nil
+	return res, nil
 }
 
-func (us *EateryService) FindEateries(filters ...string) (e []*entity.Eatery, err *apperr.AppErr) {
-	fmt.Println("filters in service: ", filters)
+func (us *EateryService) FindEateries(filters map[string]interface{}) (e []*entity.Eatery, err *apperr.AppErr) {
+	var eateries []*entity.Eatery
+	for filter, filterValue := range filters {
+		if filter == "rank" {
+			rankFilter, ok := filterValue.(int)
+			if !ok {
+				return nil, apperr.NewInternalServerError("Invalid filter type.")
+			}
 
-	// var searches []string
+			eatery, err := us.EateryPort.FindEateriesByRank(rankFilter)
+			if err != nil {
+				return nil, err
+			}
 
-	// list, err := us.EateryPort.FindEateries()
-	
-	return e, nil
+			for _, eat := range eatery {
+				eateries = append(eateries, eat)
+			}
+		} else if filter == "category" {
+			categoryFilter, ok := filterValue.(string)
+			if !ok {
+				return nil, apperr.NewInternalServerError("Invalid filter type.")
+			}
+			eatery, err := us.EateryPort.FindEateriesByCategory(categoryFilter)
+			if err != nil {
+				return nil, err
+			}
+
+			for _, eat := range eatery {
+				eateries = append(eateries, eat)
+			}
+		}
+	}
+
+	if len(eateries) == 0 {
+		return nil, apperr.NewNotFoundError("No eateries found.")
+	}
+
+	log.Info().
+		Str("journey", "eateryService.FindEateries").
+		Msg("Eateries found successfully.")
+
+	return eateries, nil
 }

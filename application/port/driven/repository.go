@@ -14,7 +14,8 @@ type UserPort interface {
 }
 
 type EateryPort interface {
-	FindEatery(uuid string) (*entity.Eatery, *apperr.AppErr)
+	FindEateryByName(name string) ([]*entity.Eatery, *apperr.AppErr)
+	FindEateriesByRank(uuid int) ([]*entity.Eatery, *apperr.AppErr)
+	FindEateriesByCategory(uuid string) ([]*entity.Eatery, *apperr.AppErr)
 	CreateEatery(user *entity.Eatery) (err *apperr.AppErr)
-	FindEateries(searches []string) ([]*entity.Eatery, *apperr.AppErr)
 }

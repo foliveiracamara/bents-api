@@ -27,14 +27,14 @@ func (s *Server) InitRoutes(isLambda string) interface{} {
 		{
 			e.POST("", s.controllerWrapper(eateryController.CreateEatery))
 			e.GET("/list", s.controllerWrapper(eateryController.FindEateries)) 
-			e.GET("/:uuid", s.controllerWrapper(eateryController.GetEatery)) 
+			e.GET("/:name", s.controllerWrapper(eateryController.GetEatery)) 
 		}
 	}
 
 	if isLambda == "TRUE" {
 		return s.Echo
 	} else {
-		s.Echo.Logger.Fatal(s.Echo.Start(":8080"))
+		s.Echo.Logger.Fatal(s.Echo.Start(":10000"))
 	}
 
 	return nil

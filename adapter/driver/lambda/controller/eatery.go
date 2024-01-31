@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	inmemory "github.com/foliveiracamara/bents-api/adapter/driven/in_memory"
 	"github.com/foliveiracamara/bents-api/adapter/driver/lambda/model/request"
@@ -19,7 +20,6 @@ import (
 type EateryController struct {
 	EateryService port.EateryService
 	Validate      *request.CustomValidator
-	Model         *response.EateryResponse
 }
 
 func newEateryController(svc port.EateryService, cv *request.CustomValidator) *EateryController {
@@ -59,8 +59,9 @@ func (uc *EateryController) CreateEatery(ctx echo.Context) error {
 		UUID:     uuid.New().String(),
 		Name:     req.Name,
 		Email:    req.Email,
-		Type:     req.Type,
+		Category: req.Category,
 		Password: req.Password,
+		Rank:     req.Rank,
 	}
 
 	svc, appErr := uc.EateryService.CreateEatery(eateryDomain)
@@ -79,30 +80,46 @@ func (uc *EateryController) CreateEatery(ctx echo.Context) error {
 }
 
 func (uc *EateryController) GetEatery(ctx echo.Context) error {
-	uuid := ctx.Param("uuid")
+	name := ctx.Param("name")
 
-	user, err := uc.EateryService.GetEatery(uuid)
+	user, err := uc.EateryService.GetEatery(name)
 	if err != nil {
 		return ctx.JSON(err.Code, err)
 	}
 
-	userResponse := uc.Model.ParseEateryDomainToResponse(user)
+	model := response.EateriesResponse{}
+	userResponse := model.ParseEateryDomainToResponse(user)
+
+	log.Info().
+		Str("journey", "eateryController.GetEatery").
+		Msgf("Eateries found successfully.",)
 
 	return ctx.JSON(http.StatusOK, userResponse)
 }
 
 func (uc *EateryController) FindEateries(ctx echo.Context) error {
-	eateryType := ctx.QueryParam("type")
-	rankType := ctx.QueryParam("rank")
+	eateryCategory := ctx.QueryParam("type")
+	eateryRank := ctx.QueryParam("rank")
 
-	fmt.Printf("eatery type: %s, rank type: %s", eateryType, rankType)
-
-	eateries, err := uc.EateryService.FindEateries(eateryType, rankType)
+	eateryRankInt, err := strconv.Atoi(eateryRank)
 	if err != nil {
-		return ctx.JSON(err.Code, err)
+		return ctx.JSON(http.StatusInternalServerError, err)
 	}
 
-	// eateryResponse := uc.Model.ParseEateryDomainToResponse(user)
+	filters := map[string]interface{}{
+		"category": eateryCategory,
+		"rank":     eateryRankInt,
+	}
 
-	return ctx.JSON(http.StatusOK, eateries)
+	eateries, appErr := uc.EateryService.FindEateries(filters)
+	if err != nil {
+		return ctx.JSON(appErr.Code, appErr)
+	}
+
+	model := &response.EateriesResponse{}
+	eateriesResponse := model.ParseEateryDomainToResponse(eateries)
+
+	fmt.Println("response: ", eateriesResponse)
+
+	return ctx.JSON(http.StatusOK, eateriesResponse)
 }
