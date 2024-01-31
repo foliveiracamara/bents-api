@@ -5,7 +5,7 @@ type Eatery struct {
 	Name     string
 	Email    string
 	Address  string
-	Type     string
+	Category string
 	Images   []string
 	Rank     int
 	Password string

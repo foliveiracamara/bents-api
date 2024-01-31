@@ -12,7 +12,7 @@ type UserService interface {
 }
 
 type EateryService interface {
-	GetEatery(uuid string) (*entity.Eatery, *apperr.AppErr)
+	GetEatery(name string) ([]*entity.Eatery, *apperr.AppErr)
 	CreateEatery(user *entity.Eatery) (u *entity.Eatery, err *apperr.AppErr)
-	FindEateries(filters ...string) ([]*entity.Eatery, *apperr.AppErr)
+	FindEateries(filters map[string]interface{}) ([]*entity.Eatery, *apperr.AppErr)
 }
